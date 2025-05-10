@@ -1,0 +1,6 @@
+-buoc1:tải phần mềm "starwind V2V Converter" dùng để chuyển đổi file boot
+synology.img qua vmdk
+https://www.starwindsoftware.com/starwind-v2v-converter
+
+-bước 2: tải DSM 6.2 => Jun's Loader v1.03b DS3617xs
+https://xpenology.club/downloads
