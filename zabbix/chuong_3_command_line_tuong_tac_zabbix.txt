@@ -1,0 +1,78 @@
+1.xem trạng thái của zabbix server
+[systemctl status zabbix-server]
+
+2. các lệnh khởi động Zabbix
+[systemctl stop zabbix-server]
+
+[systemctl start zabbix-server]
+
+[systemctl restart zabbix-server]
+
+3. xem phiên bản zabbix-server
+[zabbix_server -V]
+
+4. lệnh help
+[zabbix_server -h]
+
+5. có ý nghĩa là khởi động tiến trình Zabbix server bằng cách sử dụng file cấu hình cụ thể tại đường dẫn:
+[zabbix_server -c /etc/zabbix/zabbix_server.conf ]
+
+6.Yêu cầu Zabbix server tải lại (reload) bộ nhớ đệm cấu hình (configuration cache) mà không cần khởi động lại dịch vụ.
+[sudo zabbix_server -R config_cache_reload]
+
+7.Giảm mức độ ghi log (log level) của Zabbix server ngay lập tức mà không cần khởi động lại dịch vụ.
+
+[sudo zabbix_server -R log_level_decrease]
+Bạn dùng lệnh này khi:
+   Đang debug và muốn giảm bớt lượng log (để dễ đọc hơn).
+   Tránh log quá nhiều gây đầy đĩa.
+   Muốn thay đổi log level mà không restart dịch vụ Zabbix.
+
+8.Tăng mức độ ghi log (log level) của Zabbix server ngay lập tức mà không cần khởi động lại dịch vụ.
+
+[sudo zabbix_server -R log_level_increase]
+
+9. Yêu cầu Zabbix server hiển thị thông tin chẩn đoán (diagnostic info) của thành phần history cache — một phần quan trọng trong bộ nhớ đệm của Zabbix.
+
+[sudo zabbix_server -R diaginfo=historycache]
+
+Chẩn đoán tình trạng hoạt động của history cache.
+
+Xác định xem Zabbix có bị quá tải không (cache có bị đầy, mất dữ liệu, hoặc không đủ space).
+
+Hữu ích khi bạn gặp lỗi như:
+
+Dữ liệu không ghi được vào DB.
+
+Mất dữ liệu từ các agent.
+
+Warning như history cache is full.
+
+
+10.
+[sudo zabbix_server -R diaginfo=valuecache]
+value cache là một phần trong bộ nhớ của Zabbix server dùng để:
+Lưu giá trị cuối cùng (last value) của mỗi item đang được giám sát.
+Phục vụ nhanh cho việc đánh giá trigger, biểu đồ, hoặc giao diện web mà không cần truy vấn lại CSDL.
+Giúp tăng hiệu năng vì không cần truy xuất DB quá nhiều lần.
+
+11. [sudo zabbix_server -R diaginfo=lld]
+Hiển thị thông tin chẩn đoán (diagnostics) về hệ thống Low-Level Discovery (LLD) trong Zabbix.
+LLD (Low-Level Discovery) là tính năng cho phép Zabbix tự động phát hiện và tạo ra các item, trigger, graph... dựa trên một mẫu định sẵn — ví dụ:
+Phát hiện các ổ đĩa trên máy chủ
+Phát hiện interface mạng
+Phát hiện các tiến trình, port đang mở
+
+12.[sudo zabbix_server -R diaginfo=alerting]
+Yêu cầu Zabbix server hiển thị thông tin chẩn đoán (diagnostic) liên quan đến hệ thống cảnh báo (alerting system) — cụ thể là xử lý sự kiện, action, và gửi thông báo (email, Telegram, script...).
+
+13. [sudo zabbix_agentd -p]
+Kiểm tra danh sách tất cả các item keys (các khóa dữ liệu) mà Zabbix agent có thể trả về.
+Hiển thị giá trị hiện tại của từng khóa.
+Dùng để gỡ lỗi hoặc kiểm tra nhanh khả năng thu thập dữ liệu của Zabbix agent.
+
+14.chinh port zabbix agent
+[sudo nano /etc/zabbix/zabbix_agentd.conf] => listeningport = 10050 ddung
+
+[zabbix_get -s 192.168.184.179 -p 10050 -k "system.hostname"]
+Lấy hostname của máy có địa chỉ IP 192.168.184.179 từ Zabbix agent đang chạy trên đó, qua cổng 10050.

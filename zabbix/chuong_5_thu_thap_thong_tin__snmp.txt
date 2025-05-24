@@ -1,0 +1,19 @@
+snmp và mối quan hệ snmp với Zabbix
+
+1.để sử dụng snmp ta cần cài đặt hai gói
+[sudo yum install net-snmp net-snmp-utils]
+
+2. chỉnh sửa file config của snmp
+[sudo nano /etc/snmp/snmpd.conf]
+thêm dòng
+rocommunity !@#$%
+
+3. [sudo systemctl start snmpd] 
+   [[sudo systemctl status snmpd]]
+   [sudo systemctl enable snmpd]
+
+
+
+
+
+
