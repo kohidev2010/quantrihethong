@@ -1,0 +1,145 @@
+✅ TOÀN BỘ TRÌNH TỰ CẤU HÌNH CA VÀ HTTPS CÓ SAN
+🟩 PHẦN A – CÀI ĐẶT CA NỘI BỘ TRÊN SERVER-CA
+🔧 1. Cài Role CA (Certification Authority)
+Trên SERVER-CA:
+
+Mở Server Manager → Add Roles and Features
+
+Nhấn Next đến bước Select server roles → tick:
+✅ Active Directory Certificate Services
+
+Bấm Next đến phần Role Services, chọn:
+✅ Certification Authority
+(nếu bạn muốn dùng web nộp chứng chỉ như http://localhost/certsrv, tick thêm ✅ Web Enrollment)
+
+Next → Install
+
+🔧 2. Cấu hình CA
+Sau khi cài xong → bấm "Configure Active Directory Certificate Services on this server"
+
+Credentials: để mặc định (Administrator)
+
+Role Service: chọn ✅ Certification Authority
+
+Setup type: chọn ✅ Enterprise CA
+
+CA type: chọn ✅ Root CA
+
+Private key: chọn ✅ Create a new private key
+
+Còn lại giữ mặc định → Next → Configure → Close
+
+→ ✅ CA đã sẵn sàng để cấp chứng chỉ
+
+🟩 PHẦN B – TẠO YÊU CẦU CHỨNG CHỈ CÓ SAN TRÊN WEB SERVER
+🔧 3. Mở MMC và tạo Certificate Request
+Trên máy chạy web (IIS):
+
+Nhấn Windows + R → gõ mmc → Enter
+
+Menu: File > Add/Remove Snap-in…
+→ Add: Certificates > Computer account > Local computer → OK
+
+Mở:
+
+scss
+Sao chép
+Chỉnh sửa
+Certificates (Local Computer)
+└─ Personal
+   └─ Certificates
+Chuột phải vào Certificates → chọn:
+All Tasks > Advanced Operations > Create Custom Request...
+
+Wizard hiện ra:
+
+Chọn: Proceed without enrollment policy → Next
+
+Template: (No template) CNG key → Next
+
+Nhấn Details > Properties
+
+🔧 4. Nhập thông tin CN và SAN
+Trong cửa sổ Certificate Properties:
+
+Tab Subject:
+
+Subject Name → Common Name: www.kohi.com → Add
+
+Alternative Name → DNS: www.kohi.com → Add
+
+Tab Private Key:
+
+Mở “Key Options”
+
+Tick: ✅ Make private key exportable
+
+→ Nhấn OK → Next
+→ Chọn Base 64 encoded
+→ Lưu file: www_kohi_com.req
+
+🟩 PHẦN C – GỬI YÊU CẦU VÀ NHẬN CHỨNG CHỈ TỪ CA
+🔧 5. Gửi yêu cầu bằng Web Enrollment
+Trên SERVER-CA, mở trình duyệt và truy cập:
+
+arduino
+Sao chép
+Chỉnh sửa
+http://localhost/certsrv
+Chọn: Request a certificate
+
+→ Chọn: Advanced certificate request
+
+→ Chọn: Submit a certificate request by using a base-64-encoded CMC or PKCS #10 file
+
+Mở file www_kohi_com.req bằng Notepad → copy toàn bộ nội dung
+
+Dán vào ô "Saved Request"
+
+Certificate Template: chọn Web Server
+
+→ Bấm Submit
+
+Sau đó → Download certificate → lưu lại file .cer
+
+🔧 6. Import chứng chỉ vào máy IIS
+Trở lại MMC trên máy IIS
+
+Chuột phải vào Personal > Certificates → All Tasks > Import
+
+Chọn file .cer bạn vừa tải về
+
+🟩 PHẦN D – GÁN CHỨNG CHỈ VÀO WEBSITE TRONG IIS
+🔧 7. Gán cert cho website HTTPS
+Mở IIS Manager
+
+Chọn Default Web Site (hoặc website của bạn)
+
+Nhấn Bindings... → nhấn Add hoặc Edit dòng https
+
+Type: https
+
+SSL certificate: chọn chứng chỉ www.kohi.com
+
+Nhấn OK → chạy iisreset để khởi động lại IIS
+
+🟩 PHẦN E – KIỂM TRA TỪ MÁY CLIENT
+Trên Win10 đã join domain:
+
+Mở Edge / Chrome
+
+Gõ: https://www.kohi.com
+
+Nếu thành công:
+
+Hiện ổ khóa 🔒
+
+Không báo lỗi chứng chỉ
+
+Xem View Certificate → tab Details → có mục:
+
+pgsql
+Sao chép
+Chỉnh sửa
+Subject Alternative Name
+DNS Name = www.kohi.com
