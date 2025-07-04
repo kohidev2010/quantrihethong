@@ -75,6 +75,8 @@ Chọn tài khoản domain admin: ví dụ kohi\administrator
 Database: chọn Windows Internal Database nếu không có SQL Server
 
 → Nhấn Configure → chờ hoàn tất (có thể vài phút)
+Mở PowerShell (admin):
+Set-AdfsProperties -EnableIdPInitiatedSignonPage $true
 
 🔹 BƯỚC 5 – Kiểm tra giao diện web ADFS
 Từ client đã join domain, mở trình duyệt (Chrome, Edge, hoặc IE):
