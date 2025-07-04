@@ -1,0 +1,84 @@
+🛠️ CÁC BƯỚC TRIỂN KHAI ADFS + GIAO DIỆN WEB
+🔹 BƯỚC 1 – Tạo và cấp chứng chỉ SSL cho adfs.kohi.com
+Tại máy ADFS-SRV:
+
+Mở MMC → Add snap-in Certificates > Computer account
+
+Chuột phải vào Personal > Certificates →
+All Tasks > Advanced Operations > Create Custom Request...
+
+Chọn:
+
+Proceed without enrollment policy
+
+No template (CNG key)
+
+Trong Details > Properties:
+
+Subject Name: CN = adfs.kohi.com
+
+Alternative Name (SAN): DNS = adfs.kohi.com
+
+Tab Private Key: tick Make private key exportable
+
+Xuất file .req
+
+Nộp .req lên CA (bằng GUI MMC hoặc http://localhost/certsrv)
+
+Nhận về file .cer → Import vào:
+
+MMC > Personal > Certificates trên máy ADFS
+
+🔹 BƯỚC 2 – Tạo bản ghi DNS cho ADFS
+Tại máy Domain Controller (có DNS Server):
+
+Mở DNS Manager
+
+Vào Forward Lookup Zone kohi.com → New Host (A):
+
+Name: adfs
+
+IP: 192.168.1.140 (máy ADFS-SRV)
+
+✅ Kiểm tra:
+
+bash
+Sao chép mã
+ping adfs.kohi.com
+🔹 BƯỚC 3 – Cài đặt role ADFS
+Tại ADFS-SRV:
+
+Vào Server Manager > Add Roles and Features
+
+Chọn role:
+
+✅ Active Directory Federation Services
+
+Cài đặt và chờ hoàn tất
+
+🔹 BƯỚC 4 – Cấu hình ADFS
+Sau khi cài xong sẽ có tùy chọn:
+👉 “Configure the federation service on this server”
+
+Chạy wizard và chọn:
+
+Create the first federation server in a federation server farm
+
+Chứng chỉ SSL: chọn adfs.kohi.com vừa import
+
+Federation Service Name: adfs.kohi.com
+
+Display Name: ví dụ KOHI ADFS
+
+Chọn tài khoản domain admin: ví dụ kohi\administrator
+
+Database: chọn Windows Internal Database nếu không có SQL Server
+
+→ Nhấn Configure → chờ hoàn tất (có thể vài phút)
+
+🔹 BƯỚC 5 – Kiểm tra giao diện web ADFS
+Từ client đã join domain, mở trình duyệt (Chrome, Edge, hoặc IE):
+
+url
+Sao chép mã
+https://adfs.kohi.com/adfs/ls/IdpInitiatedSignOn.aspx
