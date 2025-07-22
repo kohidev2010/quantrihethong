@@ -1,0 +1,277 @@
+💻 HỆ THỐNG MÔ PHỎNG
+| Máy                  | Vai trò                         | Ghi chú                                            |
+| -------------------- | ------------------------------- | -------------------------------------------------- |
+| `PDC-01`             | Domain Controller (AD DS + DNS) | Đã cài đặt, domain: kohi.com                       |
+| `MAIL-SERVER`        | Exchange Server 2019            | Đã join domain kohi.com                            |
+| `CLIENT1`, `CLIENT2` | Windows 10                      | Dùng để truy cập Outlook Web hoặc cấu hình Outlook |
+
+
+🚀 PHẦN 1: CHUẨN BỊ TRÊN MAIL-SERVER
+✅ Bước 1: Cài đặt các Windows Features bằng GUI
+Mở Server Manager trên MAIL-SERVER
+
+Click vào Manage → chọn Add Roles and Features
+
+Bấm Next đến khi đến mục Select installation type
+
+Chọn Role-based or feature-based installation → Next
+
+Select a server: chọn đúng máy MAIL-SERVER → Next
+
+Server Roles:
+
+✅ Tick chọn: Web Server (IIS)
+→ Hộp thoại hiện ra, chọn Add Features
+
+Bấm Next
+
+Features: Tick chọn các mục sau:
+
+✅ .NET Framework 4.8 Features
+
+✅ Windows Process Activation Service
+
+.NET Environment
+
+Configuration APIs
+
+✅ Media Foundation
+
+✅ Remote Server Administration Tools > Role Administration Tools > AD DS and AD LDS Tools
+
+
+
+| Tên feature                      | Có tick không? | Ghi chú                   |
+| -------------------------------- | -------------- | ------------------------- |
+| **.NET Framework 4.7/4.8**       | ✅ Có           | Bắt buộc                  |
+| **ASP.NET 4.7/4.8**              | ✅ Có           | Bắt buộc                  |
+| **SMTP Server (trong Features)** | ❌ Không        | Không cần, Exchange tự lo |
+| **Web Server (IIS)**             | ✅ Có           | Cần cho OWA, ECP          |
+| **Remote Server Admin Tools**    | ✅ Có           | Nên có để quản lý         |
+
+
+================================================================
+Bấm Next → Install
+
+⏳ Chờ hệ thống cài xong → Restart máy nếu có yêu cầu
+
+
+=========================================================================
+✅ Bước 2: Cài đặt .NET Framework 4.8 (nếu chưa có)
+Truy cập trang:
+👉 https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48
+
+Tải bản offline:
+
+Download .NET Framework 4.8 Runtime (offline installer)
+→ File: ndp48-x86-x64-allos-enu.exe
+
+Click đúp file → chọn:
+
+I have read and accept → Install
+
+Đợi quá trình cài → Finish
+
+Restart máy nếu có yêu cầu
+
+
+
+===================================================================
+✅ Bước 3: Cài Visual C++ Redistributable 2012 và 2013
+➤ Visual C++ 2012 x64
+Truy cập: https://www.microsoft.com/en-us/download/details.aspx?id=30679
+
+Chọn file: vcredist_x64.exe → bấm Next
+
+Mở file → tick I agree → Install
+
+➤ Visual C++ 2013 x64
+Truy cập: https://www.microsoft.com/en-us/download/details.aspx?id=40784
+
+Chọn file: vcredist_x64.exe → bấm Next
+
+Mở file → tick I agree → Install
+
+✅ Sau khi cài xong, kiểm tra tại:
+Control Panel > Programs and Features xem đã có 2 dòng Visual C++ 2012 và 2013 (x64)
+
+
+
+===================================================================
+✅ Bước 4: Gán quyền tài khoản cài Exchange
+Trên PDC-01:
+
+Mở Active Directory Users and Computers
+
+Tìm user administrator@kohi.com
+
+Nhấn phải → Add to a group
+
+Gõ: Enterprise Admins, Schema Admins → Add
+
+❗ Sau khi cài Exchange xong có thể xóa user ra khỏi các nhóm này.
+
+
+
+====================================================================
+📦 PHẦN 2: CÀI ĐẶT EXCHANGE SERVER 2019
+✅ Bước 1: Chuẩn bị file ISO Exchange 2019
+Tải tại:
+👉 https://www.microsoft.com/en-us/download/details.aspx?id=104131
+
+Mount file ISO (Click phải → Mount)
+
+Mở ổ đĩa ảo > Chạy Setup.exe
+
+ Bước 2: Cài đặt bằng GUI
+Check for updates: Chọn Connect to the Internet and check for updates → Next
+
+Copy Setup Files → Next
+
+Introduction → Next
+
+License Agreement → Accept → Next
+
+Recommended Settings: Chọn Use recommended settings → Next
+
+Server Role Selection:
+
+Chọn Mailbox role
+
+Bỏ chọn Edge Transport
+
+Tick vào: Automatically install Windows Server roles and features
+→ Next
+
+Installation Space and Location:
+
+Giữ mặc định hoặc chọn ổ đĩa khác nếu muốn → Next
+
+Malware Protection Settings:
+
+Bạn có thể để Enable hoặc Disable
+
+Readiness Check: Hệ thống sẽ kiểm tra đầy đủ các điều kiện.
+
+Nếu có cảnh báo hoặc lỗi → sửa theo hướng dẫn
+
+Nếu OK → Nhấn Install
+
+Chờ khoảng 20-40 phút → khi cài xong → Restart nếu được yêu cầu
+
+Thiếu Microsoft Unified Communications Managed API 4.0, Core Runtime 64-bit
+
+Mô tả: Exchange yêu cầu thư viện này để hoạt động.
+
+Cách xử lý: Tải và cài đặt tại đây:
+🔗 https://www.microsoft.com/download/details.aspx?id=34992
+
+Thiếu 'IIS URL Rewrite Module'
+
+Mô tả: Exchange yêu cầu IIS URL Rewrite để xử lý các URL chuyển hướng và cấu hình.
+
+Cách xử lý: Tải và cài đặt tại đây:
+🔗 https://www.iis.net/downloads/microsoft/url-rewrite
+
+⚠️ Cảnh báo (Warnings):
+===========================================================
+
+
+🛠️ Hướng dẫn tạo bản ghi A trong DNS (trên máy PDC-01):
+Mở Server Manager trên PDC-01 (máy đã cài AD/DNS).
+
+Chọn Tools > DNS.
+
+Trong DNS Manager:
+
+Mở rộng Forward Lookup Zones.
+
+Chọn tên domain của bạn (ví dụ: kohi.com).
+
+Click chuột phải chọn New Host (A or AAAA).
+
+Điền:
+
+Name: mail (hệ thống sẽ hiểu là mail.kohi.com)
+
+IP address: IP của máy Exchange Server (ví dụ: 192.168.1.200)
+
+Nhấn Add Host → OK.
+
+✅ Đúng rồi! Ở bước truy cập giao diện quản trị Exchange qua https://mail.kohi.com/ecp(trên google chrome hoac edge)
+
+
+
+=========================================================================
+
+cài đặt cấu hình CERTIFICATE cho web server
+
+
+Bước 1: Chuẩn bị chứng chỉ SSL
+Bạn có 2 lựa chọn:
+
+Cách	Loại chứng chỉ	Mục đích
+1	Tự ký (Self-Signed)	Dùng trong lab (dễ bị cảnh báo nhưng dùng được)
+2	CA nội bộ (Enterprise CA)	Đã có CA Server trong lab (đảm bảo tin cậy trong hệ thống nội bộ)
+
+👉 Bạn đã có CA nội bộ trong domain kohi.com, nên sẽ dùng cách 2 là tốt nhất.
+
+Bước 2: Tạo CSR (Certificate Signing Request) từ Exchange Admin Center (EAC)
+Vào trình duyệt → mở Exchange Admin Center:
+https://mail.kohi.com/ecp
+
+Đăng nhập bằng Domain Admin.
+
+Chọn Servers > Certificates
+
+Chọn server có tên máy mail (ví dụ: MAIL-SERVER)
+
+Click ➕ (Add) để tạo request mới.
+
+Chọn: Create a request for a certificate from a certification authority
+
+Nhập tên dễ nhớ (VD: mail.kohi.com cert), nhấn Next
+
+Tại phần Request a Wildcard Certificate? → Không chọn
+
+Nhập các tên miền (SANs) bạn muốn bảo vệ:
+
+mail.kohi.com
+
+autodiscover.kohi.com
+
+localhost (tuỳ chọn)
+
+Chọn nơi lưu file CSR → VD: C:\CertRequest.req
+
+Bước 3: Gửi CSR lên CA nội bộ để lấy file .cer
+Truy cập CA Web:
+http://www.kohi.com/certsrv
+
+Chọn Request a certificate → advanced certificate request
+
+Mở file CSR (CertRequest.req) → copy nội dung → dán vào ô yêu cầu
+
+Chọn Template: Web Server
+
+Gửi request → Download file .cer
+
+=> import certificate(mmc) vào máy PDC-01 nếu cài webserver trên máy này
+
+
+
+=============================================================
+thêm chứng chỉ vào trong website
+Bạn đang ở giao diện Site Binding để thêm HTTPS cho một website trên IIS. Trong cửa sổ “Edit Site Binding” có các mục:
+
+Type: https (✅ đúng)
+
+IP address: 192.168.1.28 (🚫 sai nếu IP máy bạn là 192.168.1.250)
+
+Port: 443 (✅ đúng)
+
+SSL Certificate: đã chọn “ssl-mail” (✅ đúng, nếu đúng chứng chỉ của CA bạn cấp)
+
+=> việc thêm chứng chỉ chỉ hỗ trợ khi dang nhập tên https://mail.kohi.com/ecp không hiển thị màu đỏ chữ https
+
+
