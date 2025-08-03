@@ -1,0 +1,59 @@
+✅ 1) Windows 10 Will Install Some Drivers Automatically
+
+Windows 10 includes a basic set of generic drivers.
+
+It will often install basic functionality for common devices (e.g., keyboard, mouse, display at low resolution).
+
+However, these drivers might lack full features or optimal performance.
+
+✅ 2) Drivers You Should Check/Install Manually
+Right after installing Windows 10, you should download and install the latest drivers from your motherboard/laptop/computer manufacturer’s support website, especially these:
+
+🔹 Chipset drivers
+
+Critical for motherboard communication, power management, USB stability, PCI devices, etc.
+
+🔹 Graphics driver (GPU)
+
+Intel, AMD, or NVIDIA driver for full resolution, hardware acceleration, and gaming.
+
+🔹 Audio driver
+
+Realtek, Conexant, or other audio chips to enable proper sound quality and microphone functions.
+
+🔹 Network drivers (Ethernet & Wi-Fi)
+
+LAN driver (for wired internet)
+
+Wireless/Wi-Fi driver (for wireless connectivity)
+
+🔹 Touchpad driver (laptops)
+
+For full touchpad features like gestures and scrolling.
+
+🔹 Storage/RAID drivers (if applicable)
+
+Needed if your laptop/PC uses Intel RST or RAID — without it, SSDs in RAID mode might not be recognized or optimized.
+
+🔹 Bluetooth driver
+
+Even if Windows installs a generic one, the OEM driver often unlocks better stability.
+
+🔹 Other device drivers
+
+Card readers, fingerprint readers, special function buttons (hotkeys), or webcam drivers.
+
+✅ 3) How to Check Missing Drivers
+After installing Windows:
+
+Open Device Manager.
+
+Look for any devices with a yellow exclamation mark ⚠️ or listed under “Other devices” — these need drivers.
+
+✅ 4) Where to Get Drivers
+
+Best: Laptop/PC manufacturer’s official website (e.g., Dell, HP, Lenovo support pages).
+
+Alternative: Directly from Intel, NVIDIA, AMD websites for GPU/chipset.
+
+Avoid sketchy driver sites — they often bundle malware.
